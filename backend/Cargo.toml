@@ -1,0 +1,46 @@
+[workspace]
+resolver = "2"
+members = ["crates/*"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[workspace.dependencies]
+loglens-core = { path = "crates/core" }
+loglens-config = { path = "crates/config" }
+loglens-storage = { path = "crates/storage" }
+loglens-loki = { path = "crates/loki" }
+loglens-severity = { path = "crates/severity" }
+loglens-ai = { path = "crates/ai" }
+loglens-alerts = { path = "crates/alerts" }
+loglens-auth = { path = "crates/auth" }
+
+anyhow = "1"
+argon2 = "0.5"
+async-trait = "0.1"
+axum = { version = "0.8", features = ["ws", "macros"] }
+chrono = { version = "0.4", default-features = false, features = ["clock", "serde", "std"] }
+futures = "0.3"
+jsonwebtoken = "9"
+password-hash = { version = "0.5", features = ["getrandom"] }
+regex = "1"
+reqwest = { version = "0.12", default-features = false, features = ["json", "stream", "rustls-tls"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+sha2 = "0.10"
+sqlx = { version = "0.8", default-features = false, features = ["runtime-tokio", "sqlite", "migrate", "macros", "chrono"] }
+thiserror = "2"
+tokio = { version = "1", features = ["macros", "rt-multi-thread", "sync", "time", "net", "signal"] }
+tokio-stream = "0.1"
+tokio-tungstenite = "0.26"
+tower = { version = "0.5", features = ["util"] }
+tower-http = { version = "0.6", features = ["trace", "cors"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+urlencoding = "2"
+wiremock = "0.6"
+
+[profile.dev.package.argon2]
+opt-level = 3

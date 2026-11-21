@@ -1,0 +1,12 @@
+target/
+**/target/
+*.db
+*.db-*
+.env
+.env.*
+Dockerfile
+.dockerignore
+**/*.rs.bk
+.git
+.idea/
+.vscode/

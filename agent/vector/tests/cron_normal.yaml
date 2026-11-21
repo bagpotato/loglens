@@ -1,0 +1,19 @@
+name: "CRON identifier is cron and PRIORITY 6 is normal"
+inputs:
+  - insert_at: normalize
+    type: log
+    log_fields:
+      source_type: journald
+      host: app1
+      message: "(root) CMD (/usr/local/bin/backup.sh)"
+      SYSLOG_IDENTIFIER: CRON
+      _SYSTEMD_UNIT: cron.service
+      PRIORITY: "6"
+outputs:
+  - extract_from: severity
+    conditions:
+      - type: vrl
+        source: |
+          assert_eq!(.source, "cron")
+          assert_eq!(.severity, "normal")
+          assert_eq!(.severity_source, "default")

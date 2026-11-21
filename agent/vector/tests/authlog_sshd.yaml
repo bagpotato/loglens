@@ -1,0 +1,18 @@
+name: "auth.log sshd line is parsed into ssh with the prefix stripped"
+inputs:
+  - insert_at: normalize
+    type: log
+    log_fields:
+      source_type: file
+      host: web1
+      file: /var/log/auth.log
+      message: "Nov 21 10:00:00 web1 sshd[1234]: Invalid user oracle from 192.0.2.10 port 40022"
+outputs:
+  - extract_from: severity
+    conditions:
+      - type: vrl
+        source: |
+          assert_eq!(.source, "ssh")
+          assert_eq!(.message, "Invalid user oracle from 192.0.2.10 port 40022")
+          assert_eq!(.severity, "important")
+          assert_eq!(.severity_source, "rule")

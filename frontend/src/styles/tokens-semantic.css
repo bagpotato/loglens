@@ -1,0 +1,111 @@
+:root {
+  color-scheme: dark;
+
+  --bg: var(--ink-950);
+  --surface: var(--ink-900);
+  --surface-raised: var(--ink-850);
+  --surface-sunken: #0a0a09;
+  --surface-hover: var(--ink-800);
+  --line: var(--ink-800);
+  --line-strong: var(--ink-700);
+  --fg: var(--ink-50);
+  --fg-muted: var(--ink-300);
+  --fg-subtle: var(--ink-400);
+  --accent: var(--ink-50);
+  --accent-hover: var(--ink-0);
+  --on-accent: var(--ink-950);
+  --focus: var(--ink-0);
+  --overlay: rgb(0 0 0 / 0.72);
+  --selection: rgb(245 245 243 / 0.18);
+
+  --logo-tile: var(--ink-50);
+  --logo-inner: var(--ink-950);
+
+  --ai: var(--cyan-300);
+  --ai-bg: rgb(98 214 232 / 0.1);
+  --ai-line: rgb(98 214 232 / 0.38);
+  --live: var(--green-400);
+
+  --sev-critical-fg: var(--red-400);
+  --sev-critical-bg: rgb(255 75 62 / 0.14);
+  --sev-critical-line: rgb(255 107 97 / 0.5);
+  --sev-critical-solid: var(--red-500);
+  --sev-important-fg: var(--orange-400);
+  --sev-important-bg: rgb(255 138 31 / 0.13);
+  --sev-important-line: rgb(255 159 67 / 0.45);
+  --sev-important-solid: var(--orange-500);
+  --sev-warning-fg: var(--yellow-400);
+  --sev-warning-bg: rgb(242 194 0 / 0.11);
+  --sev-warning-line: rgb(242 209 58 / 0.4);
+  --sev-warning-solid: var(--yellow-500);
+  --sev-normal-fg: var(--ink-300);
+  --sev-normal-bg: rgb(180 180 175 / 0.08);
+  --sev-normal-line: rgb(180 180 175 / 0.28);
+  --sev-normal-solid: var(--ink-500);
+
+  --danger-fg: var(--red-400);
+  --danger-bg: rgb(255 75 62 / 0.12);
+  --danger-line: rgb(255 107 97 / 0.45);
+
+  --shadow-1: 0 1px 0 rgb(0 0 0 / 0.5);
+  --shadow-2: 0 8px 24px rgb(0 0 0 / 0.45);
+  --shadow-overlay: 0 -12px 48px rgb(0 0 0 / 0.6);
+
+  --gutter: var(--space-3);
+  --text-data: var(--size-sm);
+  --text-ui: var(--size-base);
+}
+
+:root.light {
+  color-scheme: light;
+
+  --bg: var(--ink-50);
+  --surface: var(--ink-0);
+  --surface-raised: var(--ink-0);
+  --surface-sunken: var(--ink-100);
+  --surface-hover: var(--ink-100);
+  --line: var(--ink-200);
+  --line-strong: var(--ink-300);
+  --fg: var(--ink-950);
+  --fg-muted: var(--ink-600);
+  --fg-subtle: var(--ink-500);
+  --accent: var(--ink-950);
+  --accent-hover: var(--ink-700);
+  --on-accent: var(--ink-0);
+  --focus: var(--ink-1000);
+  --overlay: rgb(13 13 12 / 0.5);
+  --selection: rgb(13 13 12 / 0.12);
+
+  --logo-tile: var(--ink-1000);
+  --logo-inner: var(--ink-0);
+
+  --ai: var(--cyan-700);
+  --ai-bg: var(--cyan-100);
+  --ai-line: rgb(4 101 122 / 0.4);
+  --live: var(--green-700);
+
+  --sev-critical-fg: var(--red-700);
+  --sev-critical-bg: var(--red-100);
+  --sev-critical-line: rgb(179 21 10 / 0.45);
+  --sev-critical-solid: var(--red-700);
+  --sev-important-fg: var(--orange-700);
+  --sev-important-bg: var(--orange-100);
+  --sev-important-line: rgb(162 65 0 / 0.45);
+  --sev-important-solid: var(--orange-500);
+  --sev-warning-fg: var(--yellow-700);
+  --sev-warning-bg: var(--yellow-100);
+  --sev-warning-line: rgb(111 86 0 / 0.45);
+  --sev-warning-solid: var(--yellow-500);
+  --sev-normal-fg: var(--ink-600);
+  --sev-normal-bg: var(--ink-100);
+  --sev-normal-line: var(--ink-300);
+  --sev-normal-solid: var(--ink-400);
+
+  --danger-fg: var(--red-700);
+  --danger-bg: var(--red-100);
+  --danger-line: rgb(179 21 10 / 0.45);
+
+  --shadow-1: 0 1px 0 rgb(13 13 12 / 0.06);
+  --shadow-2: 0 8px 24px rgb(13 13 12 / 0.16);
+  --shadow-overlay: 0 -12px 48px rgb(13 13 12 / 0.25);
+}

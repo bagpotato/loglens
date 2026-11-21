@@ -1,0 +1,5 @@
+# sshd, kernel, systemd units, cron, sudo, auth and podman (journald log driver) all arrive here.
+type: journald
+current_boot_only: true
+exclude_units:
+  - vector.service

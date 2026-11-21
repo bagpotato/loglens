@@ -1,0 +1,19 @@
+name: "journald PRIORITY 4 maps to warning"
+inputs:
+  - insert_at: normalize
+    type: log
+    log_fields:
+      source_type: journald
+      host: app1
+      message: "myapp.service: Main process exited, code=exited, status=1/FAILURE"
+      SYSLOG_IDENTIFIER: systemd
+      _SYSTEMD_UNIT: init.scope
+      PRIORITY: "4"
+outputs:
+  - extract_from: severity
+    conditions:
+      - type: vrl
+        source: |
+          assert_eq!(.source, "systemd")
+          assert_eq!(.severity, "warning")
+          assert_eq!(.severity_source, "default")

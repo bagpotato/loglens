@@ -1,0 +1,29 @@
+# journald PRIORITY first, then case-insensitive regex rules. A matching rule always wins.
+
+sev = "normal"
+prio = -1
+if .PRIORITY != null {
+  prio = to_int(.PRIORITY) ?? -1
+}
+if prio >= 0 && prio <= 2 {
+  sev = "critical"
+} else if prio == 3 {
+  sev = "important"
+} else if prio == 4 {
+  sev = "warning"
+}
+
+msg = string(.message) ?? ""
+matched = true
+if match(msg, r'(?i)kernel panic|out of memory|oom-kill|segfault|I/O error|filesystem.*read-only') {
+  sev = "critical"
+} else if match(msg, r'(?i)failed password|invalid user|authentication failure|exited with code [1-9]|HTTP/[0-9.]+" 5\d\d') {
+  sev = "important"
+} else if match(msg, r'(?i)deprecated|retrying|timeout|HTTP/[0-9.]+" 4\d\d') {
+  sev = "warning"
+} else {
+  matched = false
+}
+
+.severity = sev
+.severity_source = if matched { "rule" } else { "default" }

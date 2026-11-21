@@ -1,0 +1,18 @@
+{
+  "TCP": {
+    "443": { "HTTPS": true },
+    "8443": { "HTTPS": true }
+  },
+  "Web": {
+    "${TS_CERT_DOMAIN}:443": {
+      "Handlers": { "/": { "Proxy": "http://web:80" } }
+    },
+    "${TS_CERT_DOMAIN}:8443": {
+      "Handlers": { "/": { "Proxy": "http://ntfy:80" } }
+    }
+  },
+  "AllowFunnel": {
+    "${TS_CERT_DOMAIN}:443": false,
+    "${TS_CERT_DOMAIN}:8443": false
+  }
+}

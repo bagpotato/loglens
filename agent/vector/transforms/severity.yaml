@@ -1,0 +1,4 @@
+type: remap
+inputs:
+  - normalize
+file: vrl/severity.vrl

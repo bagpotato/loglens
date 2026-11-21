@@ -1,0 +1,26 @@
+# Requires VECTOR_DANGEROUSLY_ALLOW_ENV_VAR_INTERPOLATION=true (Vector >= 0.57), LOGLENS_LOKI_URL
+# (the LogLens web URL; nginx forwards /loki/api/v1/push to Loki) and LOGLENS_PUSH_TOKEN.
+type: loki
+inputs:
+  - severity
+endpoint: "${LOGLENS_LOKI_URL}"
+auth:
+  strategy: bearer
+  token: "${LOGLENS_PUSH_TOKEN}"
+labels:
+  host: "{{ host }}"
+  source: "{{ source }}"
+  severity: "{{ severity }}"
+  # Expands to {container="..."} for docker/podman events, to nothing otherwise.
+  "*": "{{ loki_extra_labels }}"
+encoding:
+  codec: json
+  only_fields:
+    - message
+    - severity_source
+    - unit
+remove_label_fields: true
+out_of_order_action: accept
+compression: snappy
+healthcheck:
+  enabled: false

@@ -1,0 +1,17 @@
+name: "nginx access line with 404 is warning"
+inputs:
+  - insert_at: normalize
+    type: log
+    log_fields:
+      source_type: file
+      host: web1
+      file: /var/log/nginx/access.log
+      message: "198.51.100.7 - - [21/Nov/2026:10:00:01 +0000] \"GET /wp-login.php HTTP/2.0\" 404 153 \"-\" \"Mozilla/5.0\""
+outputs:
+  - extract_from: severity
+    conditions:
+      - type: vrl
+        source: |
+          assert_eq!(.source, "nginx")
+          assert_eq!(.severity, "warning")
+          assert_eq!(.severity_source, "rule")

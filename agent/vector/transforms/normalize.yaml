@@ -1,0 +1,7 @@
+# VRL paths are relative to the working directory (systemd WorkingDirectory=/etc/vector/loglens).
+type: remap
+inputs:
+  - journald
+  - files
+  - docker*
+file: vrl/normalize.vrl

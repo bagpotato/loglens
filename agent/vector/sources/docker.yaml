@@ -1,0 +1,4 @@
+# Removed by install-agent.sh on hosts without a Docker socket.
+type: docker_logs
+exclude_containers:
+  - vector

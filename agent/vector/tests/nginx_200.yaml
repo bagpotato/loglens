@@ -1,0 +1,17 @@
+name: "nginx access line with 200 is normal"
+inputs:
+  - insert_at: normalize
+    type: log
+    log_fields:
+      source_type: file
+      host: web1
+      file: /var/log/nginx/access.log
+      message: "198.51.100.7 - - [21/Nov/2026:10:00:02 +0000] \"GET / HTTP/1.1\" 200 612 \"-\" \"Mozilla/5.0\""
+outputs:
+  - extract_from: severity
+    conditions:
+      - type: vrl
+        source: |
+          assert_eq!(.source, "nginx")
+          assert_eq!(.severity, "normal")
+          assert_eq!(.severity_source, "default")

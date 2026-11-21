@@ -1,0 +1,19 @@
+name: "docker_logs event keeps container name without slash"
+inputs:
+  - insert_at: normalize
+    type: log
+    log_fields:
+      source_type: docker
+      host: app1
+      container_name: /api
+      message: "listening on 0.0.0.0:8080"
+outputs:
+  - extract_from: severity
+    conditions:
+      - type: vrl
+        source: |
+          assert_eq!(.source, "docker")
+          assert_eq!(.container, "api")
+          assert_eq!(.loki_extra_labels, {"container": "api"})
+          assert_eq!(.severity, "normal")
+          assert_eq!(.severity_source, "default")

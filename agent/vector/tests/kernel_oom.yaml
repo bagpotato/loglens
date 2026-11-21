@@ -1,0 +1,20 @@
+name: "kernel oom-kill is critical by rule"
+inputs:
+  - insert_at: normalize
+    type: log
+    log_fields:
+      source_type: journald
+      host: db1
+      message: "Out of memory: Killed process 4242 (java) total-vm:8123456kB"
+      SYSLOG_IDENTIFIER: kernel
+      _TRANSPORT: kernel
+      PRIORITY: "3"
+outputs:
+  - extract_from: severity
+    conditions:
+      - type: vrl
+        source: |
+          assert_eq!(.source, "kernel")
+          assert_eq!(.severity, "critical")
+          assert_eq!(.severity_source, "rule")
+          assert!(!exists(.unit))

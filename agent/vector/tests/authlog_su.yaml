@@ -1,0 +1,17 @@
+name: "auth.log su line is auth"
+inputs:
+  - insert_at: normalize
+    type: log
+    log_fields:
+      source_type: file
+      host: web1
+      file: /var/log/auth.log
+      message: "2026-11-21T10:00:00.123456+00:00 web1 su[999]: (to root) bob on pts/1"
+outputs:
+  - extract_from: severity
+    conditions:
+      - type: vrl
+        source: |
+          assert_eq!(.source, "auth")
+          assert_eq!(.message, "(to root) bob on pts/1")
+          assert_eq!(.severity, "normal")

@@ -1,0 +1,21 @@
+[package]
+name = "loglens-alerts"
+version.workspace = true
+edition.workspace = true
+publish.workspace = true
+
+[dependencies]
+loglens-core.workspace = true
+loglens-config.workspace = true
+loglens-storage.workspace = true
+loglens-severity.workspace = true
+async-trait.workspace = true
+chrono.workspace = true
+futures.workspace = true
+reqwest.workspace = true
+thiserror.workspace = true
+tokio.workspace = true
+tracing.workspace = true
+
+[dev-dependencies]
+wiremock.workspace = true

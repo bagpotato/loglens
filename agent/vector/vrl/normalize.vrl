@@ -1,0 +1,82 @@
+# Sets host, source, container, unit and a string message. Labels stay low-cardinality:
+# message, PIDs and IPs never become labels.
+
+st = string(.source_type) ?? ""
+msg = string(.message) ?? to_string(.message) ?? encode_json(.message)
+ident = downcase(string(.SYSLOG_IDENTIFIER) ?? "")
+unit = string(."_SYSTEMD_UNIT") ?? ""
+comm = downcase(string(."_COMM") ?? "")
+transport = string(."_TRANSPORT") ?? ""
+path = string(.file) ?? ""
+src = ""
+container = ""
+
+if st == "docker" || st == "docker_logs" {
+  src = "docker"
+  container = replace(string(.container_name) ?? "", r'^/', "")
+} else if st == "file" {
+  if starts_with(path, "/var/log/nginx/") {
+    src = "nginx"
+  } else if starts_with(path, "/var/log/apache2/") || starts_with(path, "/var/log/httpd/") {
+    src = "apache"
+  } else {
+    # auth.log: "Nov 21 10:00:00 host sshd[123]: text" or an RFC 3339 timestamp prefix.
+    parsed = parse_regex(msg, r'^(?:[A-Za-z]{3}\s+\d{1,2}\s+\d{2}:\d{2}:\d{2}|\d{4}-\d{2}-\d{2}T\S+)\s+\S+\s+(?P<ident>[^\s\[:]+)(?:\[\d+\])?:\s?(?P<body>.*)$') ?? {}
+    parsed_ident = string(parsed.ident) ?? ""
+    if parsed_ident != "" {
+      ident = downcase(parsed_ident)
+      msg = string(parsed.body) ?? msg
+    }
+  }
+} else if st == "journald" {
+  cname = string(.CONTAINER_NAME) ?? ""
+  if cname != "" {
+    container = cname
+    src = if comm == "dockerd" || ident == "dockerd" { "docker" } else { "podman" }
+  }
+}
+
+if src == "" {
+  if match(ident, r'^sshd') || unit == "ssh.service" || unit == "sshd.service" || starts_with(unit, "sshd@") {
+    src = "ssh"
+  } else if ident == "kernel" || transport == "kernel" {
+    src = "kernel"
+  } else if includes(["cron", "crond", "anacron"], ident) || includes(["cron.service", "crond.service", "anacron.service"], unit) {
+    src = "cron"
+  } else if ident == "sudo" {
+    src = "sudo"
+  } else if includes(["su", "login", "polkitd", "polkit-agent-helper-1", "systemd-logind", "unix_chkpwd", "passwd", "chpasswd", "useradd", "userdel", "usermod", "groupadd", "chsh", "chfn"], ident) {
+    src = "auth"
+  } else if ident == "podman" || ident == "conmon" {
+    src = "podman"
+  } else if includes(["dockerd", "containerd", "docker"], ident) {
+    src = "docker"
+  } else if starts_with(ident, "nginx") {
+    src = "nginx"
+  } else if includes(["apache", "apache2", "httpd"], ident) {
+    src = "apache"
+  } else if ident == "systemd" || starts_with(ident, "systemd-") {
+    src = "systemd"
+  } else if st == "file" {
+    src = "auth"
+  } else {
+    src = "other"
+  }
+}
+
+.host = string(.host) ?? get_hostname() ?? "unknown"
+.source = src
+.message = msg
+
+if container != "" {
+  .container = container
+  .loki_extra_labels = { "container": container }
+} else {
+  .loki_extra_labels = {}
+}
+
+if unit != "" {
+  .unit = unit
+} else {
+  del(.unit)
+}

@@ -1,0 +1,22 @@
+[package]
+name = "loglens-ai"
+version.workspace = true
+edition.workspace = true
+publish.workspace = true
+
+[dependencies]
+loglens-core.workspace = true
+loglens-config.workspace = true
+async-trait.workspace = true
+chrono.workspace = true
+futures.workspace = true
+regex.workspace = true
+reqwest.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+tokio.workspace = true
+tracing.workspace = true
+
+[dev-dependencies]
+wiremock.workspace = true

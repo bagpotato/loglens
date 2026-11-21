@@ -1,0 +1,18 @@
+name: "sudo authentication failure is important"
+inputs:
+  - insert_at: normalize
+    type: log
+    log_fields:
+      source_type: journald
+      host: app1
+      message: "pam_unix(sudo:auth): authentication failure; logname=bob uid=1001 euid=0 tty=/dev/pts/0 ruser=bob rhost=  user=bob"
+      SYSLOG_IDENTIFIER: sudo
+      PRIORITY: "5"
+outputs:
+  - extract_from: severity
+    conditions:
+      - type: vrl
+        source: |
+          assert_eq!(.source, "sudo")
+          assert_eq!(.severity, "important")
+          assert_eq!(.severity_source, "rule")

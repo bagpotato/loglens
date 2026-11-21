@@ -1,0 +1,8 @@
+type: file
+include:
+  - /var/log/nginx/*.log
+  - /var/log/apache2/*.log
+  - /var/log/httpd/*log
+  - /var/log/auth.log
+read_from: end
+ignore_older_secs: 86400

@@ -1,0 +1,39 @@
+[package]
+name = "loglens-api"
+version.workspace = true
+edition.workspace = true
+publish.workspace = true
+
+[lib]
+path = "src/lib.rs"
+
+[[bin]]
+name = "loglens-api"
+path = "src/main.rs"
+
+[dependencies]
+loglens-core.workspace = true
+loglens-config.workspace = true
+loglens-storage.workspace = true
+loglens-loki.workspace = true
+loglens-severity.workspace = true
+loglens-ai.workspace = true
+loglens-alerts.workspace = true
+loglens-auth.workspace = true
+anyhow.workspace = true
+async-trait.workspace = true
+axum.workspace = true
+chrono.workspace = true
+futures.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+tokio.workspace = true
+tokio-stream.workspace = true
+tower-http.workspace = true
+tracing.workspace = true
+tracing-subscriber.workspace = true
+
+[dev-dependencies]
+tower.workspace = true
+tokio-tungstenite.workspace = true

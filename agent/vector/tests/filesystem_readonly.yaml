@@ -1,0 +1,18 @@
+name: "read-only remount is critical regardless of case"
+inputs:
+  - insert_at: normalize
+    type: log
+    log_fields:
+      source_type: journald
+      host: db1
+      message: "EXT4-fs (sda1): Remounting FILESYSTEM read-only"
+      SYSLOG_IDENTIFIER: kernel
+      PRIORITY: "6"
+outputs:
+  - extract_from: severity
+    conditions:
+      - type: vrl
+        source: |
+          assert_eq!(.source, "kernel")
+          assert_eq!(.severity, "critical")
+          assert_eq!(.severity_source, "rule")
