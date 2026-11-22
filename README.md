@@ -1,19 +1,16 @@
 # LogLens
 
+<p align="center">
+  <img src="docs/media/loglens-hero.svg" width="100%"
+       alt="Logs arrive, LogLens ranks them by severity, the AI explains the critical one and an alert reaches the phone.">
+</p>
+
 LogLens is a self-hosted log viewer for PC and mobile. It collects server logs, ranks every event by
 severity (critical, important, warning, normal) so what matters shows first, and adds an AI assistant
 that explains a log line in plain language or answers questions such as "were there SSH brute force
 attempts today?" citing real timestamps. Critical events can be pushed to your phone.
 
 The AI never hides logs: it only labels and orders them. Rule-based severity always wins over AI severity.
-
-| Overview with the AI assistant (dark) | Overview (light) |
-|---|---|
-| ![Overview with AI assistant](docs/screenshots/desktop-overview-ai-dark.png) | ![Overview, light theme](docs/screenshots/desktop-overview-light.png) |
-| **Logs and an AI explanation** | **Mobile** |
-| ![Logs and explain](docs/screenshots/desktop-logs-detail-dark.png) | <img src="docs/screenshots/mobile-overview-dark.png" alt="Mobile overview" width="220"> <img src="docs/screenshots/mobile-logs-dark.png" alt="Mobile logs" width="220"> |
-
-Screenshots use demo data; the AI answers come from a test model.
 
 ## Architecture
 
