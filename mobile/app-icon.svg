@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-359 -415 1330 1330">
+  <!-- Mark at ~46% of the canvas so Android's circular adaptive mask never clips the frame. -->
+  <rect x="-359" y="-415" width="1330" height="1330" fill="#ffffff"/>
+  <rect width="612" height="500" rx="125" fill="#000000"/>
+  <rect x="50" y="54" width="372" height="392" rx="92" fill="#ffffff"/>
+  <path d="M400 123H541V90L593 141.5L541 193V160H400Z" fill="#ffffff"/>
+  <path d="M295 284.5L235 344.5L295 404.5V366H440V323H295Z" fill="#000000"/>
+  <path d="M101.5 90L204 155L101.5 218V203L180 155L101.5 105.5Z" fill="#000000"/>
+  <circle cx="215" cy="207.5" r="10.5" fill="#000000"/>
+</svg>

@@ -10,7 +10,7 @@ The AI never hides logs: it only labels and orders them. Rule-based severity alw
 | Overview with the AI assistant (dark) | Overview (light) |
 |---|---|
 | ![Overview with AI assistant](docs/screenshots/desktop-overview-ai-dark.png) | ![Overview, light theme](docs/screenshots/desktop-overview-light.png) |
-| **Logs and an AI explanation** | **Mobile, 375 px** |
+| **Logs and an AI explanation** | **Mobile** |
 | ![Logs and explain](docs/screenshots/desktop-logs-detail-dark.png) | <img src="docs/screenshots/mobile-overview-dark.png" alt="Mobile overview" width="220"> <img src="docs/screenshots/mobile-logs-dark.png" alt="Mobile logs" width="220"> |
 
 Screenshots use demo data; the AI answers come from a test model.

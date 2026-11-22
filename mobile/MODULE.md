@@ -7,7 +7,7 @@ The app talks to a LogLens server the user enters on the login screen (`loglens.
 - `src-tauri/tauri.conf.json` — id `app.loglens.mobile`; builds the frontend first (`npm run build --prefix ../frontend`).
 - `src-tauri/capabilities/default.json` — `core:default` only (no shell/fs/http plugins).
 - `src-tauri/gen/android/` — generated Android project; cleartext HTTP allowed for LAN/emulator servers.
-- Icons: `npm run icons` (from `frontend/public/pwa-512x512.png`).
+- Icons: `npm run icons` (from `app-icon.svg`: the logo at ~46% on white so Android's circular mask never clips it).
 
 Build: `npm install`, then `npm run android:build` (debug x86_64 APK for the emulator) or `npm run android:release`.
 Needs Rust Android targets, Android SDK + NDK, JDK 17+. On Windows without Developer Mode the CLI cannot symlink

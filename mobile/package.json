@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "tauri": "tauri",
-    "icons": "tauri icon ../frontend/public/pwa-512x512.png",
+    "icons": "tauri icon app-icon.svg",
     "android:build": "tauri android build --debug --apk --target x86_64",
     "android:release": "tauri android build --apk"
   },
