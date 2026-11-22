@@ -52,6 +52,57 @@ async fn no_key_sends_no_authorization_and_v1_is_not_doubled() {
 }
 
 #[tokio::test]
+async fn base_url_with_a_path_is_used_as_is_for_gemini() {
+    let server = MockServer::start().await;
+    Mock::given(method("POST"))
+        .and(path("/v1beta/openai/chat/completions"))
+        .respond_with(completion("gemini"))
+        .expect(1)
+        .mount(&server)
+        .await;
+
+    let url = format!("{}/v1beta/openai", server.uri());
+    let provider = OpenAiProvider::new(&url, "gemini-x", Some("k".into()));
+    assert_eq!(provider.complete(&messages()).await.unwrap(), "gemini");
+}
+
+#[tokio::test]
+async fn overloaded_model_is_retried_then_succeeds() {
+    let server = MockServer::start().await;
+    Mock::given(method("POST"))
+        .and(path("/v1/chat/completions"))
+        .respond_with(ResponseTemplate::new(503).set_body_string("high demand"))
+        .up_to_n_times(1)
+        .expect(1)
+        .mount(&server)
+        .await;
+    Mock::given(method("POST"))
+        .and(path("/v1/chat/completions"))
+        .respond_with(completion("after retry"))
+        .expect(1)
+        .mount(&server)
+        .await;
+
+    let provider = OpenAiProvider::new(&server.uri(), "m", None);
+    assert_eq!(provider.complete(&messages()).await.unwrap(), "after retry");
+}
+
+#[tokio::test]
+async fn persistent_overload_fails_after_three_attempts() {
+    let server = MockServer::start().await;
+    Mock::given(method("POST"))
+        .and(path("/v1/chat/completions"))
+        .respond_with(ResponseTemplate::new(503).set_body_string("high demand"))
+        .expect(3)
+        .mount(&server)
+        .await;
+
+    let provider = OpenAiProvider::new(&server.uri(), "m", None);
+    let err = provider.complete(&messages()).await.unwrap_err();
+    assert!(matches!(err, AiError::Status { status: 503, .. }));
+}
+
+#[tokio::test]
 async fn stream_parses_sse_until_done() {
     let server = MockServer::start().await;
     let body = concat!(

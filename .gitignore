@@ -6,6 +6,8 @@
 /mobile/src-tauri/target/
 /mobile/src-tauri/gen/schemas/
 .env
+.env.*
+!.env.example
 *.db
 *.db-*
 .superpowers/

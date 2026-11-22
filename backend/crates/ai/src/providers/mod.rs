@@ -26,16 +26,60 @@ pub(crate) fn http_client() -> Client {
         .unwrap_or_else(|_| Client::new())
 }
 
-/// Sends the request and turns transport failures and non-2xx answers into `AiError`.
-pub(crate) async fn send(request: RequestBuilder) -> Result<Response, AiError> {
-    let response = request
-        .send()
-        .await
-        .map_err(|e| AiError::Http(e.to_string()))?;
-    let status = response.status();
-    if status.is_success() {
-        return Ok(response);
+/// Attempts per request when the provider is temporarily unavailable (429/502/503/504).
+const MAX_ATTEMPTS: u32 = 3;
+const BACKOFF: [Duration; 2] = [Duration::from_millis(500), Duration::from_millis(1500)];
+const MAX_RETRY_AFTER: Duration = Duration::from_secs(10);
+
+/// Sends the request, retrying temporary overloads, and turns transport failures and
+/// non-2xx answers into `AiError`.
+pub(crate) async fn send(mut request: RequestBuilder) -> Result<Response, AiError> {
+    let mut attempt = 0;
+    loop {
+        attempt += 1;
+        // A copy for the next attempt; JSON bodies are always clonable.
+        let next = (attempt < MAX_ATTEMPTS)
+            .then(|| request.try_clone())
+            .flatten();
+        let response = request
+            .send()
+            .await
+            .map_err(|e| AiError::Http(e.to_string()))?;
+        let status = response.status();
+        if status.is_success() {
+            return Ok(response);
+        }
+        let transient = matches!(status.as_u16(), 429 | 502 | 503 | 504);
+        match next {
+            Some(copy) if transient => {
+                let wait = retry_after(&response).unwrap_or(BACKOFF[(attempt - 1) as usize]);
+                tracing::warn!(
+                    status = status.as_u16(),
+                    attempt,
+                    "AI provider busy, retrying"
+                );
+                tokio::time::sleep(wait).await;
+                request = copy;
+            }
+            _ => return Err(status_error(response).await),
+        }
     }
+}
+
+fn retry_after(response: &Response) -> Option<Duration> {
+    let secs: u64 = response
+        .headers()
+        .get(reqwest::header::RETRY_AFTER)?
+        .to_str()
+        .ok()?
+        .trim()
+        .parse()
+        .ok()?;
+    Some(Duration::from_secs(secs).min(MAX_RETRY_AFTER))
+}
+
+async fn status_error(response: Response) -> AiError {
+    let status = response.status();
     let mut body = response.text().await.unwrap_or_default();
     if body.len() > MAX_ERROR_BODY {
         let mut cut = MAX_ERROR_BODY;
@@ -44,10 +88,10 @@ pub(crate) async fn send(request: RequestBuilder) -> Result<Response, AiError> {
         }
         body.truncate(cut);
     }
-    Err(AiError::Status {
+    AiError::Status {
         status: status.as_u16(),
         body,
-    })
+    }
 }
 
 pub(crate) async fn json_body(response: Response) -> Result<serde_json::Value, AiError> {

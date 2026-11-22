@@ -6,7 +6,7 @@ use serde_json::Value;
 use super::{http_client, json_body, send, text_stream, Step, COMPLETE_TIMEOUT};
 use crate::{AiError, AiProvider, ChatMessage, TextStream};
 
-/// OpenAI-compatible chat completions API (`POST {url}/v1/chat/completions`).
+/// OpenAI-compatible chat completions API (`POST {base}/chat/completions`).
 #[derive(Clone)]
 pub struct OpenAiProvider {
     client: Client,
@@ -33,10 +33,12 @@ struct ChatRequest<'a> {
 }
 
 impl OpenAiProvider {
-    /// `url` may or may not already end with `/v1`.
+    /// A bare host (`https://api.openai.com`) gets `/v1`; a URL that already has a path
+    /// (`.../v1`, Gemini's `.../v1beta/openai`) is used as the API base as is.
     pub fn new(url: &str, model: &str, key: Option<String>) -> Self {
         let base = url.trim_end_matches('/');
-        let endpoint = if base.ends_with("/v1") {
+        let after_scheme = base.split_once("://").map_or(base, |(_, rest)| rest);
+        let endpoint = if after_scheme.contains('/') {
             format!("{base}/chat/completions")
         } else {
             format!("{base}/v1/chat/completions")
