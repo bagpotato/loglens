@@ -3,6 +3,7 @@ name = "loglens-auth"
 version.workspace = true
 edition.workspace = true
 publish.workspace = true
+license.workspace = true
 
 [dependencies]
 loglens-core.workspace = true

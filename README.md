@@ -14,13 +14,51 @@ The AI never hides logs: it only labels and orders them. Rule-based severity alw
 
 ## Architecture
 
+```mermaid
+flowchart LR
+  subgraph monitored["Monitored servers"]
+    SRC["journald · Docker · nginx/apache · auth.log"] --> VEC["Vector agent<br/>normalize + severity rules"]
+  end
+
+  subgraph server["LogLens server · docker compose"]
+    WEB["web · nginx :8080<br/>PWA + reverse proxy"]
+    API["api · Rust / axum"]
+    LOKI[("Loki<br/>127.0.0.1 only")]
+    DB[("SQLite<br/>users · AI cache · alert state")]
+    NTFY["ntfy :8090"]
+  end
+
+  VEC -- "push + bearer token" --> WEB
+  WEB -- "/loki/api/v1/push" --> LOKI
+  BROWSER["Browser · PWA"] -- "/api" --> WEB
+  WEB -- "/api/*" --> API
+  ANDROID["Android app · Tauri"] -- "API + CORS" --> API
+  API -- "query · tail · stats" --> LOKI
+  API --> DB
+  API -- "masked prompts" --> AI["AI provider<br/>Ollama · OpenAI-compatible · Gemini"]
+  API -- "critical alerts" --> NTFY --> PHONE["ntfy app on the phone"]
 ```
-[Monitored server]                          [LogLens server: docker compose]
-  journald, docker, nginx/apache/auth.log
-        |                                     web (nginx :8080) --/loki/api/v1/push--> Loki (internal)
-  Vector (agent/) --push + bearer token-------> |   \--/api/--> api (Rust, axum)        ^ query / tail
-  labels: host, source, severity, container     |                 |  \--> AI provider (Ollama / OpenAI-compatible)
-                                              React PWA           \--> ntfy (:8090) --> phone app
+
+Inside the API (one crate per feature in `backend/crates/`):
+
+```mermaid
+flowchart TB
+  REQ["HTTP request"] --> AUTH["auth<br/>JWT check"]
+  AUTH --> ROUTES["api routes"]
+
+  ROUTES -- "GET /api/logs" --> QC["severity::query_classified<br/>filter by final severity"]
+  QC --> LOKIC["loki client<br/>LogQL · query_range · tail"]
+  QC --> CLS["severity classifier<br/>templates · batches of 20"]
+  CLS --> CACHE[("severity cache · SQLite")]
+  CLS --> MASK
+
+  ROUTES -- "POST /api/ai/explain · /chat" --> FEAT["ai features<br/>explain · chat · query planner"]
+  FEAT --> LOKIC
+  FEAT --> MASK["masking<br/>IPs · usernames"]
+  MASK --> PROV["AI providers<br/>retries on 429/503"]
+
+  POLL["alerts poller · every 30 s"] --> LOKIC
+  POLL --> DEDUP["dedup · 10 min per template"] --> NTFYN["ntfy notifier"]
 ```
 
 - **agent/**: Vector pipeline. `normalize.vrl` sets host, source and container; `severity.vrl` maps the journald
@@ -213,3 +251,7 @@ Each backend crate and frontend feature has a `MODULE.md` describing its purpose
   nginx) before using it over the internet; the PWA install also requires HTTPS outside localhost.
 - **AI**: with an external provider, log text leaves your network. Keep `LOGLENS_AI_MASK=true` or use Ollama.
 - `.env` holds secrets: it is git-ignored, keep it that way.
+
+## License
+
+LogLens is licensed under the [Apache License, Version 2.0](LICENSE). See [NOTICE](NOTICE).
