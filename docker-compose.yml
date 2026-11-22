@@ -14,7 +14,7 @@ services:
 
   api:
     build: ./backend
-    image: loglens-api:local
+    image: ghcr.io/bagpotato/loglens-api:${LOGLENS_VERSION:-0.1.0}
     env_file: .env
     environment:
       LOGLENS_BIND: 0.0.0.0:8080
@@ -36,7 +36,7 @@ services:
 
   web:
     build: ./frontend
-    image: loglens-web:local
+    image: ghcr.io/bagpotato/loglens-web:${LOGLENS_VERSION:-0.1.0}
     ports:
       # Set LOGLENS_WEB_BIND=127.0.0.1 to reach LogLens only through Tailscale.
       - "${LOGLENS_WEB_BIND:-0.0.0.0}:${LOGLENS_WEB_PORT:-8080}:80"

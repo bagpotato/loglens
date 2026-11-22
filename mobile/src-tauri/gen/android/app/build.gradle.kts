@@ -14,9 +14,28 @@ val tauriProperties = Properties().apply {
     }
 }
 
+// Release signing key; key.properties is git-ignored and lives next to settings.gradle.
+val keyProperties = Properties().apply {
+    val propFile = rootProject.file("key.properties")
+    if (propFile.exists()) {
+        propFile.inputStream().use { load(it) }
+    }
+}
+val hasReleaseKey = !keyProperties.getProperty("storePassword").isNullOrBlank()
+
 android {
     compileSdk = 37
     namespace = "app.loglens.mobile"
+    signingConfigs {
+        if (hasReleaseKey) {
+            create("release") {
+                storeFile = file(keyProperties.getProperty("storeFile"))
+                storePassword = keyProperties.getProperty("storePassword")
+                keyAlias = keyProperties.getProperty("keyAlias")
+                keyPassword = keyProperties.getProperty("keyPassword")
+            }
+        }
+    }
     defaultConfig {
         manifestPlaceholders["usesCleartextTraffic"] = "true"
         applicationId = "app.loglens.mobile"
@@ -39,6 +58,9 @@ android {
             }
         }
         getByName("release") {
+            if (hasReleaseKey) {
+                signingConfig = signingConfigs.getByName("release")
+            }
             optimization {
                enable = true
             }

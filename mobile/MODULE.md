@@ -14,4 +14,6 @@ Needs Rust Android targets, Android SDK + NDK, JDK 17+. On Windows without Devel
 the `.so`: copy `src-tauri/target/x86_64-linux-android/debug/libloglens_mobile_lib.so` (llvm-strip it) into
 `gen/android/app/src/main/jniLibs/x86_64/`, then `gradlew clean assembleX86_64Debug -x rustBuildX86_64Debug` in
 `gen/android` (`clean` matters: incremental packaging keeps the old unstripped `.so` as dead space, 131 MB vs 21 MB).
+Release signing: `gen/android/key.properties` (git-ignored: storeFile, keyAlias, storePassword, keyPassword); without
+it release APKs are unsigned. Release flavor: `assembleArm64Release -x rustBuildArm64Release` with the `release` `.so`.
 Env vars: `ANDROID_HOME`, `NDK_HOME`, `JAVA_HOME`. Server side: `LOGLENS_CORS_ORIGINS` must allow `http://tauri.localhost` (default).

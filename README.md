@@ -40,6 +40,11 @@ nginx, apache, other), `severity`, and `container` for docker/podman only. Messa
 
 Requirements: Docker with the Compose plugin.
 
+**From a release** (no build needed): download `loglens-deploy-<version>.tar.gz` and `SHA256SUMS` from the
+GitHub release, check them with `sha256sum -c SHA256SUMS`, unpack, then run `bash init-env.sh && docker compose pull
+&& docker compose up -d`. Images come from `ghcr.io/bagpotato/loglens-api` and `loglens-web`. The steps below build
+from the repository instead. Releases are cut by pushing a `v*` tag (`.github/workflows/release.yml`).
+
 ```sh
 bash init-env.sh        # creates .env with random admin password, JWT secret, push token and ntfy topic
 docker compose up -d
